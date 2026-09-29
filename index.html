@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>AQP Rutas</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f2f5f8;
+      color: #17212b;
+    }
+
+    header {
+      background: #1261a0;
+      color: white;
+      padding: 18px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 28px;
+    }
+
+    header p {
+      margin-top: 5px;
+      opacity: 0.9;
+    }
+
+    .container {
+      width: 95%;
+      max-width: 1100px;
+      margin: 20px auto;
+    }
+
+    .search {
+      background: white;
+      padding: 18px;
+      border-radius: 15px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.08);
+      margin-bottom: 20px;
+    }
+
+    .search input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    .map {
+      height: 300px;
+      background:
+        linear-gradient(45deg, #d8e5d0 25%, transparent 25%),
+        linear-gradient(-45deg, #d8e5d0 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #d8e5d0 75%),
+        linear-gradient(-45deg, transparent 75%, #d8e5d0 75%);
+      background-size: 80px 80px;
+      background-position: 0 0, 0 40px, 40px -40px, -40px 0;
+      border-radius: 15px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 25px;
+      border: 3px solid white;
+    }
+
+    .road {
+      position: absolute;
+      height: 18px;
+      background: #777;
+      transform: rotate(-15deg);
+      width: 120%;
+      top: 130px;
+      left: -10%;
+    }
+
+    .road2 {
+      position: absolute;
+      width: 18px;
+      height: 120%;
+      background: #888;
+      transform: rotate(25deg);
+      left: 52%;
+      top: -10%;
+    }
+
+    .location {
+      position: absolute;
+      font-size: 28px;
+      z-index: 3;
+    }
+
+    .loc1 {
+      top: 60px;
+      left: 25%;
+    }
+
+    .loc2 {
+      top: 190px;
+      left: 65%;
+    }
+
+    .loc3 {
+      top: 105px;
+      left: 75%;
+    }
+
+    .bus {
+      position: absolute;
+      font-size: 35px;
+      top: 130px;
+      left: 47%;
+      z-index: 4;
+    }
+
+    h2 {
+      margin-bottom: 15px;
+    }
+
+    .routes {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+    .route {
+      background: white;
+      padding: 18px;
+      border-radius: 15px;
+      box-shadow: 0 3px 10px rgba(0,0,0,.08);
+      transition: .2s;
+    }
+
+    .route:hover {
+      transform: translateY(-3px);
+    }
+
+    .route h3 {
+      color: #1261a0;
+      margin-bottom: 8px;
+    }
+
+    .route p {
+      color: #555;
+      margin-bottom: 12px;
+    }
+
+    .route button {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: #1261a0;
+      color: white;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    .route button:hover {
+      background: #0d4d80;
+    }
+
+    .info {
+      display: none;
+      background: #e9f4ff;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    footer {
+      margin-top: 30px;
+      padding: 20px;
+      text-align: center;
+      background: #17212b;
+      color: white;
+    }
+
+    @media (max-width: 700px) {
+      .routes {
+        grid-template-columns: 1fr;
+      }
+
+      header h1 {
+        font-size: 23px;
+      }
+
+      .map {
+        height: 250px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>🚌 AQP Rutas</h1>
+  <p>Rutas de transporte de Arequipa</p>
+</header>
+
+<div class="container">
+
+  <div class="search">
+    <input
+      type="text"
+      id="search"
+      placeholder="🔎 Buscar una ruta..."
+      onkeyup="buscarRuta()"
+    >
+  </div>
+
+  <div class="map">
+    <div class="road"></div>
+    <div class="road2"></div>
+
+    <div class="location loc1">📍</div>
+    <div class="location loc2">📍</div>
+    <div class="location loc3">📍</div>
+
+    <div class="bus">🚌</div>
+  </div>
+
+  <h2>Rutas disponibles</h2>
+
+  <div class="routes" id="routes">
+
+    <div class="route" data-route="a6">
+      <h3>🚌 Ruta A6</h3>
+      <p>Characato - Arequipa</p>
+      <button onclick="mostrarInfo('info1')">
+        Ver recorrido
+      </button>
+      <div class="info" id="info1">
+        📍 Recorrido de la ruta A6.<br>
+        🚏 Paraderos disponibles.<br>
+        🔄 Ida y vuelta.
+      </div>
+    </div>
+
+    <div class="route" data-route="a7">
+      <h3>🚌 Ruta A7</h3>
+      <p>Zona sur - Centro de Arequipa</p>
+      <button onclick="mostrarInfo('info2')">
+        Ver recorrido
+      </button>
+      <div class="info" id="info2">
+        📍 Recorrido de la ruta A7.<br>
+        🚏 Paraderos principales.<br>
+        🔄 Ida y vuelta.
+      </div>
+    </div>
+
+    <div class="route" data-route="c3">
+      <h3>🚌 Ruta C3</h3>
+      <p>Ruta urbana de Arequipa</p>
+      <button onclick="mostrarInfo('info3')">
+        Ver recorrido
+      </button>
+      <div class="info" id="info3">
+        📍 Recorrido de la ruta C3.<br>
+        🚏 Paraderos principales.
+      </div>
+    </div>
+
+    <div class="route" data-route="t6">
+      <h3>🚌 Ruta T6</h3>
+      <p>Transporte urbano</p>
+      <button onclick="mostrarInfo('info4')">
+        Ver recorrido
+      </button>
+      <div class="info" id="info4">
+        📍 Recorrido de la T6.<br>
+        🚏 Paraderos principales.
+      </div>
+    </div>
+
+    <div class="route" data-route="r1">
+      <h3>🚌 Ruta R1</h3>
+      <p>Ruta urbana</p>
+      <button onclick="mostrarInfo('info5')">
+        Ver recorrido
+      </button>
+      <div class="info" id="info5">
+        📍 Recorrido de la R1.<br>
+        🚏 Paraderos principales.
+      </div>
+    </div>
+
+    <div class="route" data-route="r2">
+      <h3>🚌 Ruta R2</h3>
+      <p>Ruta urbana</p>
+      <button onclick="mostrarInfo('info6')">
+        Ver recorrido
+      </button>
+      <div class="info" id="info6">
+        📍 Recorrido de la R2.<br>
+        🚏 Paraderos principales.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  AQP Rutas © 2026<br>
+  Proyecto académico
+</footer>
+
+<script>
+
+function mostrarInfo(id) {
+  const elemento = document.getElementById(id);
+
+  if (elemento.style.display === "block") {
+    elemento.style.display = "none";
+  } else {
+    elemento.style.display = "block";
+  }
+}
+
+function buscarRuta() {
+
+  const texto =
+    document.getElementById("search").value.toLowerCase();
+
+  const rutas =
+    document.querySelectorAll(".route");
+
+  rutas.forEach(function(ruta) {
+
+    const contenido =
+      ruta.innerText.toLowerCase();
+
+    if (contenido.includes(texto)) {
+      ruta.style.display = "block";
+    } else {
+      ruta.style.display = "none";
+    }
+
+  });
+}
+
+</script>
+
+</body>
+</html>
