@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Combi Ya | Rutas de Arequipa</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+:root{--blue:#0b63ce;--blue2:#084b9d;--bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#697386;--line:#e3e8f0;--green:#15945b;--orange:#f3a62a}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text)}button,input,select{font:inherit}button{cursor:pointer}
+header{height:70px;background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:1000}
+.brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:21px}.brand-icon{background:var(--blue);color:#fff;border-radius:13px;width:43px;height:43px;display:grid;place-items:center;font-size:25px}.brand small{display:block;font-size:11px;color:var(--muted);font-weight:500;margin-top:2px}
+.actions{display:flex;gap:8px}.icon-btn{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:11px;padding:10px 12px}
+.app{display:flex;min-height:calc(100vh - 70px)}aside{width:230px;background:var(--card);border-right:1px solid var(--line);padding:18px 13px;flex-shrink:0}
+.nav-label{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#9aa3b2;font-weight:800;padding:14px 12px 8px}
+.nav{display:block;width:100%;text-align:left;border:0;background:transparent;color:var(--muted);padding:13px 14px;border-radius:11px;margin:2px 0}.nav.active,.nav:hover{background:#eaf2ff;color:var(--blue);font-weight:700}
+main{padding:24px;flex:1;min-width:0;max-width:1600px;margin:0 auto;width:100%}.page{display:none}.page.active{display:block}
+.hero{border-radius:23px;background:linear-gradient(125deg,#0b63ce,#073c83);color:#fff;padding:30px;margin-bottom:22px;position:relative;overflow:hidden}.hero:after{content:"🚌";font-size:120px;position:absolute;right:35px;top:20px;opacity:.17;transform:rotate(-7deg)}.hero h1{font-size:clamp(25px,3vw,35px);margin:0 0 8px;position:relative;z-index:1}.hero p{margin:0;max-width:600px;color:#e0ecff;line-height:1.5;position:relative;z-index:1}.searchbar{margin-top:23px;background:#fff;border-radius:15px;padding:10px;display:flex;gap:9px;max-width:780px;position:relative;z-index:1}.searchbar input{flex:1;min-width:0;border:0;padding:9px;color:#172033;outline:none}
+.btn{border:0;background:var(--blue);color:#fff;padding:12px 16px;border-radius:10px;font-weight:700}.btn:hover{background:var(--blue2)}.btn.light{background:#edf4ff;color:var(--blue)}.btn.outline{background:transparent;border:1px solid var(--line);color:var(--text)}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.card{background:var(--card);border:1px solid var(--line);border-radius:17px;padding:19px;box-shadow:0 4px 14px #12213b08}.card h3{margin:0 0 8px}.card p{margin:0;color:var(--muted);font-size:14px;line-height:1.55}.card .btn{width:100%;margin-top:16px}
+.section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:17px}.section-head h1{font-size:27px;margin:0 0 5px}.section-head p{color:var(--muted);margin:0}
+.map-layout{display:grid;grid-template-columns:340px minmax(0,1fr);gap:16px}.panel,.map-wrap{background:var(--card);border:1px solid var(--line);border-radius:17px;overflow:hidden}.panel{padding:17px;max-height:calc(100vh - 125px);overflow:auto}.map-wrap{height:calc(100vh - 125px);min-height:500px}#map{height:100%;width:100%;background:#e8edf3}
+.route-option{padding:13px;border:1px solid var(--line);border-radius:13px;margin-top:10px;cursor:pointer}.route-option:hover,.route-option.active{border-color:var(--blue);background:#f0f6ff}.route-title{display:flex;justify-content:space-between;gap:8px;font-weight:800}.route-meta{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5}.pill{font-size:11px;background:#e9f8ef;color:#13804b;padding:5px 8px;border-radius:8px;white-space:nowrap;font-weight:800}.route-detail{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}.stop-list{list-style:none;padding:0;margin:10px 0}.stop-list li{padding:7px 0 7px 20px;position:relative;font-size:13px;color:var(--muted)}.stop-list li:before{content:"";position:absolute;left:3px;top:13px;width:8px;height:8px;border:2px solid var(--blue);border-radius:50%;background:var(--card)}
+.routes-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.route-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}.route-card h3{margin:12px 0 7px}.route-card p{color:var(--muted);font-size:14px;line-height:1.5}.route-tag{display:inline-block;background:#eaf2ff;color:var(--blue);font-weight:800;border-radius:9px;padding:7px 10px}.route-card .btn{width:100%;margin-top:8px}
+.planner{max-width:760px}.field{background:var(--card);border:1px solid var(--line);padding:13px;border-radius:12px;margin-bottom:12px}.field label{display:block;color:var(--muted);font-size:12px;margin-bottom:7px}.field select,.field input{width:100%;border:0;background:transparent;color:var(--text);outline:none}.result{display:none;background:var(--card);border:1px solid var(--line);padding:19px;border-radius:16px;margin-top:16px}.result.show{display:block}.result h3{margin:0 0 8px}
+.fav-item{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--card);border:1px solid var(--line);padding:16px;border-radius:13px;margin-bottom:10px}.muted{color:var(--muted)}
+.notice{position:fixed;right:20px;bottom:20px;background:#172033;color:#fff;padding:15px 18px;border-radius:12px;max-width:340px;box-shadow:0 10px 30px #0003;z-index:3000;opacity:0;transform:translateY(15px);pointer-events:none;transition:.2s}.notice.show{opacity:1;transform:none}.trip-alert{background:#fff7df;border:1px solid #f2d27c;color:#805b00;padding:12px;border-radius:11px;margin-top:10px;font-size:13px;line-height:1.45}body.dark .trip-alert{background:#443719;border-color:#7d6323;color:#ffe7a0}
+.mobile-nav{display:none}
+body.dark{--bg:#101722;--card:#182230;--text:#f4f7fb;--muted:#aab4c4;--line:#2b3748}body.dark .nav.active,body.dark .nav:hover,body.dark .route-option.active,body.dark .route-option:hover{background:#1d3556}body.dark .searchbar{background:#fff}body.dark .field select{color:var(--text)}body.dark .hero{background:linear-gradient(125deg,#124d96,#142f58)}
+@media(max-width:1000px){aside{width:190px}.map-layout{grid-template-columns:300px minmax(0,1fr)}main{padding:17px}.grid{grid-template-columns:1fr}.hero:after{right:10px}.routes-grid{grid-template-columns:1fr}}
+@media(max-width:760px){header{padding:0 14px;height:64px}.app{display:block}aside{display:none}main{padding:14px;padding-bottom:85px}.hero{padding:23px 18px}.hero:after{font-size:75px;right:10px;top:10px}.hero p{max-width:85%}.searchbar{flex-direction:column}.searchbar input{padding:12px}.map-layout{grid-template-columns:1fr}.panel{max-height:none;order:2}.map-wrap{height:55vh;min-height:350px;order:1}.section-head{align-items:flex-start;flex-direction:column}.mobile-nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;background:var(--card);border-top:1px solid var(--line);z-index:2000;padding:7px 2px calc(7px + env(safe-area-inset-bottom))}.mobile-nav button{border:0;background:none;color:var(--muted);font-size:10px}.mobile-nav span{display:block;font-size:20px;margin-bottom:3px}.icon-btn{padding:9px}.brand{font-size:18px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><div class="brand-icon">🚌</div><div>Combi Ya<small>Muévete mejor por Arequipa</small></div></div>
+  <div class="actions"><button class="icon-btn" onclick="toggleDark()" title="Cambiar tema">🌙</button><button class="icon-btn" onclick="startLocation()" title="Mi ubicación">📍</button></div>
+</header>
+<div class="app">
+<aside>
+ <div class="nav-label">Principal</div>
+ <button class="nav active" onclick="showPage('home',this)">🏠 &nbsp; Inicio</button>
+ <button class="nav" onclick="openMap()">🗺️ &nbsp; Mapa y recorridos</button>
+ <button class="nav" onclick="openRoutes()">🚌 &nbsp; Todas las rutas</button>
+ <button class="nav" onclick="showPage('planner',this)">🧭 &nbsp; Planificar viaje</button>
+ <button class="nav" onclick="showPage('ride',this)">🔔 &nbsp; Mi viaje / alertas</button>
+ <div class="nav-label">Mi cuenta</div>
+ <button class="nav" onclick="showPage('favorites',this)">⭐ &nbsp; Favoritos</button>
+ <button class="nav" onclick="showPage('info',this)">ℹ️ &nbsp; Información</button>
+</aside>
+<main>
+<section id="home" class="page active">
+ <div class="hero"><h1>Tu ruta por Arequipa, más clara 🚌</h1><p>Encuentra recorridos, paraderos y tiempos aproximados para organizar tu viaje sin tanta incertidumbre.</p>
+  <div class="searchbar"><input id="homeSearch" list="places" placeholder="¿A dónde quieres ir? Ej. Plaza de Armas"><datalist id="places"></datalist><button class="btn" onclick="searchFromHome()">Buscar rutas</button></div>
+ </div>
+ <div class="grid">
+  <div class="card"><h3>🗺️ Explora el mapa</h3><p>Visualiza recorridos con curvas y giros siguiendo las calles del mapa.</p><button class="btn" onclick="openMap()">Abrir mapa</button></div>
+  <div class="card"><h3>🚌 Más rutas para elegir</h3><p>Compara alternativas que conectan diferentes distritos y puntos de Arequipa.</p><button class="btn" onclick="openRoutes()">Ver todas las rutas</button></div>
+  <div class="card"><h3>📍 Tu ubicación</h3><p id="locationStatus">Activa la ubicación para mostrar tu posición aproximada en el mapa.</p><button class="btn" onclick="startLocation()">Usar mi ubicación</button></div>
+ </div>
+ <h2 style="margin:25px 0 14px">Rutas populares</h2><div class="routes-grid" id="popularRoutes"></div>
+</section>
+<section id="map-page" class="page">
+ <div class="section-head"><div><h1>Mapa de recorridos</h1><p>Selecciona una ruta para ver su trazado y paraderos.</p></div><button class="btn outline" onclick="fitRoute()">Ajustar mapa</button></div>
+ <div class="map-layout"><div class="panel"><h3>Rutas disponibles</h3><p class="muted" style="font-size:13px;margin-top:6px">Los recorridos se calculan por calles cuando el servicio de rutas está disponible.</p><div id="mapRouteList"></div><div class="route-detail" id="routeDetail"><b>Elige una ruta</b><p class="muted">Aquí aparecerán sus paraderos y el tiempo estimado.</p></div><div class="field" style="margin-top:14px"><label>¿En qué paradero vas a bajar?</label><select id="tripDestination"></select></div><button class="btn" style="width:100%;margin-top:4px" onclick="boardCombi()">🚌 Subir a mi combi</button><div id="mapRideStatus" class="result" style="display:none;margin-top:12px;padding:13px"></div><button class="btn light" style="width:100%;margin-top:8px" onclick="startTripSimulation()">▶ Comenzar viaje simulado</button><div id="tripStatus" class="route-meta" style="margin-top:10px">Elige una ruta y un destino para comenzar.</div><button class="btn outline" style="width:100%;margin-top:10px" onclick="toggleAnimation()" id="animateBtn">▶ Simular movimiento libre</button></div>
+ <div class="map-wrap"><div id="map"></div></div></div>
+</section>
+<section id="routes-page" class="page">
+ <div class="section-head"><div><h1>Todas las rutas</h1><p>Explora conexiones entre distritos y lugares conocidos.</p></div></div><div class="routes-grid" id="allRoutes"></div>
+</section>
+<section id="planner" class="page">
+ <div class="section-head"><div><h1>Planifica tu viaje</h1><p>Indica a dónde vas y revisa las rutas que pasan por la zona.</p></div></div>
+ <div class="planner"><div class="field"><label>¿Desde dónde sales?</label><select id="origin"></select></div><div class="field"><label>¿A dónde quieres llegar?</label><select id="destination"></select></div><button class="btn" onclick="planTrip()">Buscar opciones</button><button class="btn outline" onclick="swapPlaces()">Intercambiar</button><div id="planResult" class="result"></div></div>
+</section>
+<section id="ride" class="page">
+ <div class="section-head"><div><h1>Mi viaje y alertas 🔔</h1><p>Busca tu destino, sube a la combi simulada y recibe una alerta antes de llegar.</p></div></div>
+ <div class="planner"><div class="card">
+  <div class="field"><label>Ruta que tomarás</label><select id="rideRoute"></select></div>
+  <div class="field"><label>¿Dónde vas a bajar?</label><select id="rideDestination"></select></div>
+  <p class="muted" style="font-size:13px;margin-bottom:14px">La alerta se activa durante la simulación al acercarse al destino elegido. No usa GPS de una combi real.</p>
+  <button class="btn" style="background:#15945b" onclick="startRide()">🚌 Subir a mi combi y comenzar viaje</button>
+  <button class="btn outline" style="margin-top:8px" onclick="stopRide()">Finalizar viaje</button>
+ </div><div id="rideStatus" class="result show" style="margin-top:14px"><h3>No tienes un viaje activo</h3><p class="muted">Selecciona tu ruta y destino para comenzar la simulación.</p></div></div>
+</section>
+<section id="favorites" class="page"><div class="section-head"><div><h1>Mis favoritos ⭐</h1><p>Guarda las rutas que consultas con más frecuencia.</p></div></div><div id="favoritesList"></div></section>
+<section id="info" class="page"><div class="section-head"><div><h1>Acerca de Combi Ya</h1><p>Una propuesta para facilitar los desplazamientos en Arequipa.</p></div></div><div class="card"><h3>¿Qué puedes hacer?</h3><p>Consultar rutas y paraderos, revisar recorridos sobre el mapa, comparar tiempos aproximados y guardar rutas favoritas. Esta versión es un prototipo: los tiempos, las líneas de transporte y el movimiento de las combis son demostrativos, no información oficial en tiempo real.</p><h3 style="margin-top:18px">Sobre los recorridos</h3><p>El mapa usa datos cartográficos de OpenStreetMap y solicita trazados por calles al servicio público OSRM. Si no hay conexión, se muestra un trazado aproximado de demostración. Las rutas presentadas no representan necesariamente itinerarios oficiales de empresas de transporte.</p></div></section>
+</main>
+</div>
+<nav class="mobile-nav"><button onclick="showPage('home',this)"><span>🏠</span>Inicio</button><button onclick="openMap()"><span>🗺️</span>Mapa</button><button onclick="openRoutes()"><span>🚌</span>Rutas</button><button onclick="showPage('planner',this)"><span>🧭</span>Destino</button><button onclick="showPage('ride',this)"><span>🔔</span>Mi viaje</button><button onclick="showPage('favorites',this)"><span>⭐</span>Favoritos</button></nav>
+<div id="notice" class="notice"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const places = {
+ "Plaza de Armas": [-16.3989,-71.5369],
+ "Terminal Terrestre": [-16.4312,-71.5350],
+ "Cayma": [-16.3509,-71.5477],
+ "Cerro Colorado": [-16.3638,-71.5904],
+ "Yanahuara": [-16.3892,-71.5500],
+ "Paucarpata": [-16.4195,-71.5035],
+ "Miraflores": [-16.3980,-71.5188],
+ "José Luis Bustamante y Rivero": [-16.4258,-71.5277],
+ "Mall Plaza": [-16.4277,-71.5460],
+ "Universidad Nacional de San Agustín": [-16.4068,-71.5255],
+ "Hospital Regional": [-16.4047,-71.5350],
+ "Av. Ejército": [-16.3890,-71.5478],
+ "Umacollo": [-16.3970,-71.5450],
+ "Sachaca": [-16.4290,-71.5660],
+ "Mariano Melgar": [-16.4040,-71.4865],
+ "Parque Lambramani": [-16.4205,-71.5290],
+ "Avelino": [-16.4260,-71.5250],
+ "Aeropuerto": [-16.3410,-71.5830],
+ "Plaza Las Américas": [-16.3650,-71.5600]
+};
+// Correct coordinate typo defensively in case edited by a browser extension.
+places["Terminal Terrestre"] = [-16.4312,-71.5350];
+const routes = [
+ {id:"12",name:"Cayma – Centro",from:"Cayma",to:"Plaza de Armas",via:["Av. Ejército","Yanahuara","Umacollo"],mins:14,color:"#0b63ce"},
+ {id:"24",name:"Paucarpata – Centro",from:"Paucarpata",to:"Plaza de Armas",via:["Parque Lambramani","Universidad Nacional de San Agustín","Miraflores"],mins:20,color:"#f28c28"},
+ {id:"36",name:"Cerro Colorado – Centro",from:"Cerro Colorado",to:"Plaza de Armas",via:["Plaza Las Américas","Av. Ejército","Yanahuara"],mins:22,color:"#18a56b"},
+ {id:"7",name:"Miraflores – Terminal",from:"Miraflores",to:"Terminal Terrestre",via:["Plaza de Armas","Hospital Regional"],mins:18,color:"#8b5cf6"},
+ {id:"18",name:"Yanahuara – Paucarpata",from:"Yanahuara",to:"Paucarpata",via:["Umacollo","Plaza de Armas","Parque Lambramani"],mins:25,color:"#e34b75"},
+ {id:"21",name:"Aeropuerto – Centro",from:"Aeropuerto",to:"Plaza de Armas",via:["Cerro Colorado","Plaza Las Américas","Av. Ejército"],mins:24,color:"#0f9eaa"},
+ {id:"30",name:"Sachaca – Centro",from:"Sachaca",to:"Plaza de Armas",via:["Mall Plaza","Avelino","Hospital Regional"],mins:23,color:"#b7791f"},
+ {id:"41",name:"Bustamante – Cayma",from:"José Luis Bustamante y Rivero",to:"Cayma",via:["Avelino","Plaza de Armas","Yanahuara"],mins:27,color:"#64748b"},
+ {id:"15",name:"Mariano Melgar – Centro",from:"Mariano Melgar",to:"Plaza de Armas",via:["Miraflores","Hospital Regional"],mins:19,color:"#d946ef"},
+ {id:"28",name:"Terminal – Cerro Colorado",from:"Terminal Terrestre",to:"Cerro Colorado",via:["Plaza de Armas","Yanahuara","Plaza Las Américas"],mins:26,color:"#2563eb"},
+ {id:"5",name:"Avelino – Cayma",from:"Avelino",to:"Cayma",via:["Parque Lambramani","Plaza de Armas","Av. Ejército"],mins:24,color:"#059669"},
+ {id:"33",name:"Umacollo – Miraflores",from:"Umacollo",to:"Miraflores",via:["Universidad Nacional de San Agustín","Plaza de Armas"],mins:16,color:"#ea580c"}
+];
+let map, routeLayers=[], selectedRoute=routes[0], routeCoordinates={}, combiMarker=null, animationTimer=null, animating=false, userMarker=null, favorites=JSON.parse(localStorage.getItem("combiYaFavs")||"[]");
+let tripTimer=null, tripActive=false, tripBoarded=false, tripIndex=0, tripPath=[];
+function notify(msg){const n=document.getElementById("notice");n.textContent=msg;n.classList.add("show");setTimeout(()=>n.classList.remove("show"),2800)}
+function showPage(id,el){document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelectorAll(".nav").forEach(n=>n.classList.remove("active"));if(el&&el.classList.contains("nav"))el.classList.add("active");if(id==="map-page")setTimeout(()=>{initMap();map.invalidateSize();drawRoute(selectedRoute)},100);if(id==="favorites")renderFavorites();if(id==="ride")initRideControls();window.scrollTo({top:0,behavior:"smooth"})}
+function openMap(){showPage("map-page");setTimeout(()=>{initMap();map.invalidateSize();drawRoute(selectedRoute)},120)}
+function openRoutes(){showPage("routes-page");document.querySelectorAll(".nav").forEach(n=>n.classList.remove("active"));document.querySelectorAll(".nav")[2]?.classList.add("active")}
+function toggleDark(){document.body.classList.toggle("dark");notify(document.body.classList.contains("dark")?"Modo oscuro activado":"Modo claro activado");if(map)setTimeout(()=>map.invalidateSize(),100)}
+function initMap(){if(map)return;map=L.map("map").setView([-16.3989,-71.5369],12);L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(map)}
+function routePoints(r){return [places[r.from],...r.via.map(x=>places[x]),places[r.to]]}
+function fallbackPath(points){let out=[];for(let i=0;i<points.length-1;i++){const a=points[i],b=points[i+1];if(i===0)out.push(a);const mid1=[a[0]+(b[0]-a[0])*.32,a[1]+(b[1]-a[1])*.32+(i%2?.002:-.002)];const mid2=[a[0]+(b[0]-a[0])*.68,a[1]+(b[1]-a[1])*.68+(i%2?-.0015:.0015)];out.push(mid1,mid2,b)}return out}
+async function getStreetPath(r){const pts=routePoints(r);const key=r.id;if(routeCoordinates[key])return routeCoordinates[key];try{let coords=pts.map(p=>`${p[1]},${p[0]}`).join(";");let response=await fetch(`https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson&steps=true`,{signal:AbortSignal.timeout(9000)});if(!response.ok)throw Error("route");let data=await response.json();if(data.code!=="Ok"||!data.routes?.length)throw Error("route");let path=data.routes[0].geometry.coordinates.map(c=>[c[1],c[0]]);routeCoordinates[key]=path;return path}catch(e){let path=fallbackPath(pts);routeCoordinates[key]=path;return path}}
+function renderMapRouteList(){const el=document.getElementById("mapRouteList");el.innerHTML=routes.map(r=>`<div class="route-option ${r.id===selectedRoute.id?"active":""}" onclick="selectRoute('${r.id}')"><div class="route-title"><span>Ruta ${r.id} · ${r.name}</span><span class="pill">${r.mins} min</span></div><div class="route-meta">${r.from} → ${r.to}<br>${r.via.length} paraderos intermedios</div></div>`).join("")}
+function renderTripDestination(r){const sel=document.getElementById("tripDestination");if(!sel)return;sel.innerHTML=[...r.via,r.to].map(s=>`<option value="${s}">${s}</option>`).join("");sel.value=r.to}
+function renderRouteDetail(r){renderTripDestination(r);document.getElementById("routeDetail").innerHTML=`<b>Ruta ${r.id}: ${r.name}</b><p class="muted" style="font-size:12px;margin-top:5px">Tiempo aproximado: ${r.mins} min · Recorrido demostrativo</p><ul class="stop-list">${[r.from,...r.via,r.to].map(s=>`<li>${s}</li>`).join("")}</ul><button class="btn light" onclick="toggleFavorite('${r.id}')">${favorites.includes(r.id)?"★ Quitar de favoritos":"☆ Guardar favorita"}</button><button class="btn" style="width:100%;margin-top:8px;background:#15945b" onclick="prepareRide('${r.id}')">🚌 Subir a esta combi</button>`}
+async function drawRoute(r){if(!map)return;selectedRoute=r;renderMapRouteList();renderRouteDetail(r);routeLayers.forEach(l=>map.removeLayer(l));routeLayers=[];const path=await getStreetPath(r);if(!map)return;const line=L.polyline(path,{color:r.color,weight:6,opacity:.9,lineCap:"round",lineJoin:"round"}).addTo(map);routeLayers.push(line);routePoints(r).forEach((p,i)=>{const label=[r.from,...r.via,r.to][i];const marker=L.circleMarker(p,{radius:i===0||i===routePoints(r).length-1?7:5,color:r.color,fillColor:"#fff",fillOpacity:1,weight:3}).bindTooltip(label,{direction:"top"}).addTo(map);routeLayers.push(marker)});if(combiMarker)map.removeLayer(combiMarker);combiMarker=L.marker(path[0],{icon:L.divIcon({className:"",html:'<div style="font-size:25px;filter:drop-shadow(0 2px 2px #555)">🚌</div>',iconSize:[30,30],iconAnchor:[15,15]})}).addTo(map).bindTooltip("Combi (simulación)");map.fitBounds(line.getBounds(),{padding:[35,35]});document.getElementById("animateBtn").textContent=animating?"⏸ Detener movimiento":"▶ Simular movimiento"}
+function selectRoute(id){const r=routes.find(x=>x.id===id);if(!r)return;if(tripTimer)clearInterval(tripTimer);tripActive=false;tripBoarded=false;selectedRoute=r;drawRoute(r)}
+function fitRoute(){if(map&&routeLayers.length){const lines=routeLayers.filter(x=>x instanceof L.Polyline);if(lines[0])map.fitBounds(lines[0].getBounds(),{padding:[30,30]})}}
+function toggleAnimation(){if(animating){clearInterval(animationTimer);animating=false;document.getElementById("animateBtn").textContent="▶ Simular movimiento";return}if(!combiMarker){drawRoute(selectedRoute);return}animating=true;document.getElementById("animateBtn").textContent="⏸ Detener movimiento";let i=0;const path=routeCoordinates[selectedRoute.id]||fallbackPath(routePoints(selectedRoute));animationTimer=setInterval(()=>{if(!animating||!combiMarker)return;i=(i+1)%path.length;combiMarker.setLatLng(path[i])},180)}
+function boardCombi(){
+ if(!map){openMap();setTimeout(boardCombi,450);return}
+ tripBoarded=true;
+ if("Notification" in window && Notification.permission==="default"){try{Notification.requestPermission()}catch(e){}}
+ document.getElementById("tripStatus").innerHTML='<div class="trip-alert">🚌 <b>¡Ya subiste a tu combi!</b><br>Cuando estés listo, pulsa “Comenzar viaje simulado”.</div>';
+ notify("¡Subiste a tu combi! Elige comenzar el viaje simulado.");
+}
+async function startTripSimulation(){
+ if(!map){openMap();setTimeout(startTripSimulation,450);return}
+ if(!tripBoarded){boardCombi();return}
+ const destination=document.getElementById("tripDestination")?.value||selectedRoute.to;
+ const allStops=[selectedRoute.from,...selectedRoute.via,selectedRoute.to];
+ const stopIndex=allStops.indexOf(destination);
+ tripPath=await getStreetPath(selectedRoute);
+ if(!tripPath.length){notify("No se pudo cargar el recorrido. Intenta otra vez.");return}
+ if(tripTimer)clearInterval(tripTimer);
+ if(combiMarker)combiMarker.setLatLng(tripPath[0]);
+ tripIndex=0;tripActive=true;animating=false;
+ document.getElementById("tripStatus").innerHTML=`<div class="trip-alert">🧭 <b>Viaje en curso</b><br>Destino: ${destination}<br>La alerta aparecerá al llegar al paradero seleccionado.</div>`;
+ let target=places[destination], targetIndex=tripPath.length-1, best=Infinity;
+ for(let i=0;i<tripPath.length;i++){const d=(tripPath[i][0]-target[0])**2+(tripPath[i][1]-target[1])**2;if(d<best){best=d;targetIndex=i}}
+ if(targetIndex<5)targetIndex=Math.min(tripPath.length-1,Math.floor(tripPath.length*.7));
+ const step=Math.max(1,Math.floor(targetIndex/100));
+ tripTimer=setInterval(()=>{
+   tripIndex=Math.min(tripIndex+step,targetIndex);
+   if(combiMarker)combiMarker.setLatLng(tripPath[tripIndex]);
+   document.getElementById("tripStatus").innerHTML=`<div class="trip-alert">🚌 <b>Viaje en curso</b><br>Paradero para bajar: ${destination}<br>Recorrido simulado: ${Math.round(tripIndex/Math.max(1,targetIndex)*100)}%</div>`;
+   if(tripIndex>=targetIndex){
+     clearInterval(tripTimer);tripActive=false;
+     document.getElementById("tripStatus").innerHTML=`<div class="trip-alert">🔔 <b>¡Alerta: ya debes bajar!</b><br>Has llegado al paradero seleccionado: <b>${destination}</b>.<br>Este aviso corresponde a la simulación del prototipo.</div>`;
+     notify("🔔 ¡Baja en tu paradero! Llegaste a "+destination);
+     try{if("Notification" in window && Notification.permission==="granted")new Notification("Combi Ya: ¡es hora de bajar!",{body:"Llegaste a "+destination});if("speechSynthesis" in window){speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance("Atención. Baja en tu paradero. "+destination));}}catch(e){}
+     tripBoarded=false;
+   }
+ },180);
+}
+function renderRoutes(){const html=routes.map(r=>`<article class="route-card"><span class="route-tag">Ruta ${r.id}</span><h3>${r.name}</h3><p>📍 ${r.from} → ${r.to}<br>Paraderos: ${r.via.join(" · ")}<br>Tiempo estimado: ${r.mins} min</p><button class="btn" onclick="selectedRoute=routes.find(x=>x.id==='${r.id}');openMap()">Ver recorrido en el mapa</button><button class="btn light" style="margin-top:8px;width:100%" onclick="toggleFavorite('${r.id}')">${favorites.includes(r.id)?"★ En favoritos":"☆ Guardar en favoritos"}</button><button class="btn" style="margin-top:8px;width:100%;background:#15945b" onclick="prepareRide('${r.id}')">🚌 Subir a esta combi</button></article>`).join("");document.getElementById("allRoutes").innerHTML=html;document.getElementById("popularRoutes").innerHTML=routes.slice(0,3).map(r=>`<article class="route-card"><span class="route-tag">Ruta ${r.id}</span><h3>${r.name}</h3><p>${r.from} → ${r.to}<br>⏱ ${r.mins} min aprox.</p><button class="btn" onclick="selectedRoute=routes.find(x=>x.id==='${r.id}');openMap()">Ver recorrido</button></article>`).join("")}
+function toggleFavorite(id){favorites=favorites.includes(id)?favorites.filter(x=>x!==id):[...favorites,id];localStorage.setItem("combiYaFavs",JSON.stringify(favorites));renderRoutes();renderFavorites();if(selectedRoute.id===id)renderRouteDetail(selectedRoute);notify(favorites.includes(id)?"Ruta guardada en favoritos":"Ruta quitada de favoritos")}
+function renderFavorites(){const el=document.getElementById("favoritesList");const fav=routes.filter(r=>favorites.includes(r.id));el.innerHTML=fav.length?fav.map(r=>`<div class="fav-item"><div><b>Ruta ${r.id} · ${r.name}</b><div class="muted" style="font-size:13px;margin-top:5px">${r.from} → ${r.to} · ${r.mins} min aprox.</div></div><button class="btn" onclick="selectedRoute=routes.find(x=>x.id==='${r.id}');openMap()">Ver ruta</button></div>`).join(""):'<div class="card"><h3>Aún no tienes rutas guardadas</h3><p>Entra a “Todas las rutas” y toca “Guardar en favoritos”.</p><button class="btn" onclick="openRoutes()">Explorar rutas</button></div>'}
+function fillSelects(){const names=Object.keys(places);document.getElementById("origin").innerHTML=names.map(x=>`<option>${x}</option>`).join("");document.getElementById("destination").innerHTML=names.map(x=>`<option>${x}</option>`).join("");document.getElementById("origin").value="Cayma";document.getElementById("destination").value="Plaza de Armas";document.getElementById("places").innerHTML=names.map(x=>`<option value="${x}">`).join("")}
+function planTrip(){const a=document.getElementById("origin").value,b=document.getElementById("destination").value;if(a===b){notify("Elige dos lugares diferentes.");return}const matches=routes.filter(r=>(r.from===a||r.to===b||r.via.includes(a)||r.via.includes(b))&&(r.from===a||r.to===a||r.via.includes(a))&&(r.from===b||r.to===b||r.via.includes(b)));const chosen=matches.length?matches:routes.filter(r=>r.from===a||r.to===b||r.from===b||r.to===a).slice(0,3);const res=document.getElementById("planResult");res.classList.add("show");res.innerHTML=`<h3>Opciones para tu viaje</h3><p class="muted">De <b>${a}</b> a <b>${b}</b>. Estas coincidencias son sugerencias del prototipo.</p>`+(chosen.length?chosen.slice(0,4).map(r=>`<div class="route-option"><b>Ruta ${r.id} · ${r.name}</b><div class="route-meta">⏱ ${r.mins} min aprox. · ${r.from} → ${r.to}</div><button class="btn" style="margin-top:9px" onclick="selectedRoute=routes.find(x=>x.id==='${r.id}');openMap()">Ver recorrido</button></div>`).join(""):'<p style="margin-top:12px">No encontramos una ruta que conecte directamente esos puntos. Prueba con otro origen o destino.</p>')}
+function swapPlaces(){const a=document.getElementById("origin"),b=document.getElementById("destination"),v=a.value;a.value=b.value;b.value=v}
+function searchFromHome(){const val=document.getElementById("homeSearch").value.trim();if(!val){notify("Escribe un lugar o distrito para buscar.");return}let r=routes.find(x=>x.to.toLowerCase().includes(val.toLowerCase())||x.from.toLowerCase().includes(val.toLowerCase())||x.via.some(v=>v.toLowerCase().includes(val.toLowerCase())));if(!r){notify("No encontramos una coincidencia exacta. Mira todas las rutas disponibles.");openRoutes();return}selectedRoute=r;openMap()}
+function startLocation(){if(!navigator.geolocation){notify("Tu navegador no permite consultar la ubicación.");return}notify("Solicitando permiso de ubicación…");navigator.geolocation.getCurrentPosition(pos=>{const p=[pos.coords.latitude,pos.coords.longitude];document.getElementById("locationStatus").textContent="Ubicación disponible en este dispositivo.";if(!map)initMap();if(userMarker)map.removeLayer(userMarker);userMarker=L.circleMarker(p,{radius:9,color:"#fff",weight:3,fillColor:"#2563eb",fillOpacity:1}).addTo(map).bindTooltip("Tu ubicación");openMap();setTimeout(()=>{if(map){map.setView(p,15);userMarker?.openTooltip()}},250);notify("Tu ubicación se muestra en el mapa.")},()=>notify("No se pudo obtener la ubicación. Revisa los permisos del navegador."),{enableHighAccuracy:false,timeout:10000})}
+
+let activeRide=null, rideTimer=null, rideAlerted=false;
+function initRideControls(){
+ const rr=document.getElementById("rideRoute"), rd=document.getElementById("rideDestination");
+ if(!rr||!rd)return;
+ const previous=rr.value||selectedRoute.id;
+ rr.innerHTML=routes.map(r=>`<option value="${r.id}">Ruta ${r.id} · ${r.name}</option>`).join("");
+ rr.value=routes.some(r=>r.id===previous)?previous:selectedRoute.id;
+ fillRideDestinations();
+ rr.onchange=()=>fillRideDestinations();
+}
+function fillRideDestinations(){
+ const rr=document.getElementById("rideRoute"), rd=document.getElementById("rideDestination");
+ if(!rr||!rd)return;
+ const r=routes.find(x=>x.id===rr.value)||routes[0], old=rd.value;
+ const stops=[r.from,...r.via,r.to];
+ rd.innerHTML=stops.slice(1).map(s=>`<option value="${s}">${s}</option>`).join("");
+ rd.value=stops.includes(old)&&old!==r.from?old:r.to;
+}
+function prepareRide(id){
+ selectedRoute=routes.find(x=>x.id===id)||routes[0];
+ showPage("ride");
+ initRideControls();
+ document.getElementById("rideRoute").value=selectedRoute.id;
+ fillRideDestinations();
+ document.getElementById("rideDestination").value=selectedRoute.to;
+}
+async function startRide(){
+ if("Notification" in window && Notification.permission==="default"){
+   try{await Notification.requestPermission()}catch(e){}
+ }
+ const r=routes.find(x=>x.id===document.getElementById("rideRoute").value)||routes[0];
+ const destination=document.getElementById("rideDestination").value;
+ const stops=[r.from,...r.via,r.to], destIndex=stops.indexOf(destination);
+ if(destIndex<=0){notify("Elige un destino después del punto de partida.");return}
+ stopRide(false);
+ activeRide={route:r,destination,stops,destIndex};
+ rideAlerted=false;selectedRoute=r;
+ // Al iniciar, llevar directamente al mapa y mantener ahí la simulación.
+ showPage("map-page");
+ initMap();
+ await drawRoute(r);
+ if(map){setTimeout(()=>{map.invalidateSize();fitRoute()},120)}
+ const status=document.getElementById("mapRideStatus");
+ if(status){
+   status.style.display="block";
+   status.classList.add("show");
+   status.innerHTML=`<h3>🚌 Viaje en curso: Ruta ${r.id}</h3><p>Destino: <b>${destination}</b></p><p class="muted">Observa el mapa: la combi avanza por el recorrido simulado.</p><div style="height:9px;background:var(--line);border-radius:10px;margin:14px 0;overflow:hidden"><div id="rideProgressBar" style="height:100%;width:0;background:#15945b;transition:width .3s"></div></div><p id="rideProgressText" class="muted">Preparando recorrido…</p><button class="btn outline" style="width:100%" onclick="stopRide()">Finalizar viaje</button>`;
+ }
+ const path=routeCoordinates[r.id]||fallbackPath(routePoints(r));
+ let i=0;
+ if(rideTimer)clearInterval(rideTimer);
+ rideTimer=setInterval(()=>{
+   if(!activeRide){clearInterval(rideTimer);rideTimer=null;return}
+   i++;
+   const progress=Math.min(1,i/45), percent=Math.round(progress*100);
+   const bar=document.getElementById("rideProgressBar"), txt=document.getElementById("rideProgressText");
+   if(bar)bar.style.width=percent+"%";
+   if(txt)txt.textContent=`Recorrido simulado: ${percent}% · Próximo destino: ${destination}`;
+   if(combiMarker&&path.length){
+     const point=path[Math.min(Math.floor(progress*(path.length-1)),path.length-1)];
+     combiMarker.setLatLng(point);
+     if(map&&i%3===0)map.panTo(point,{animate:true,duration:.3});
+   }
+   if(!rideAlerted&&progress>=0.72&&progress<1){
+     rideAlerted=true;
+     triggerRideAlert(`🔔 ¡Prepárate para bajar! Tu paradero, ${destination}, está cerca.`);
+   }
+   if(progress>=1){
+     clearInterval(rideTimer);rideTimer=null;
+     if(bar)bar.style.width="100%";
+     if(txt)txt.textContent="Has llegado a tu destino.";
+     triggerRideAlert(`📍 ¡Llegaste a ${destination}! Puedes bajar de la combi.`);
+     const mapStatus=document.getElementById("mapRideStatus");
+     if(mapStatus)mapStatus.innerHTML=`<h3>📍 ¡Llegaste a tu destino!</h3><p>La simulación de la Ruta ${r.id} terminó en <b>${destination}</b>.</p><button class="btn" onclick="stopRide()">Cerrar viaje</button>`;
+     activeRide=null;
+   }
+ },600);
+}
+function triggerRideAlert(message){
+ notify(message);
+ const status=document.getElementById("mapRideStatus");
+ if(status){status.style.display="block";const box=document.createElement("div");box.style.cssText="margin-top:12px;padding:13px;border-radius:12px;background:#fff3d8;color:#7b4c00;font-weight:700";box.textContent=message;status.prepend(box)}
+ if("Notification" in window && Notification.permission==="granted"){try{new Notification("Combi Ya",{body:message})}catch(e){}}
+}
+function stopRide(reset=true){
+ if(rideTimer){clearInterval(rideTimer);rideTimer=null}
+ activeRide=null;
+ if(reset){const s=document.getElementById("rideStatus");if(s)s.innerHTML="<h3>Viaje finalizado</h3><p class='muted'>Puedes buscar otro destino cuando quieras.</p>";const ms=document.getElementById("mapRideStatus");if(ms){ms.style.display="block";ms.innerHTML="<h3>Viaje finalizado</h3><p class='muted'>Puedes iniciar otra simulación cuando quieras.</p>"}notify("Viaje simulado finalizado.")}
+}
+
+function homeSearchKey(e){if(e.key==="Enter")searchFromHome()}
+document.getElementById("homeSearch").addEventListener("keydown",homeSearchKey);
+fillSelects();renderRoutes();renderFavorites();
+</script>
+</body>
+</html>
